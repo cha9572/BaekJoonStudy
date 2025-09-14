@@ -1,7 +1,9 @@
+package STACK.WEEK1.BOJ_6198;
+
 import java.io.*;
 import java.util.Stack;
 
-public class P6198 {
+public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
