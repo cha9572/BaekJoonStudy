@@ -1,4 +1,4 @@
-package STACK.WEEK1.BOJ_6198;
+package STACK.WEEK1_CKW.BOJ_6198;
 
 import java.io.*;
 import java.util.Stack;

@@ -1,7 +1,9 @@
+package BFS.WEEK3.BOJ_1926;
+
 import java.io.*;
 import java.util.*;
 
-public class P1926 {
+public class Main {
 
     static int[][] paper;
     static int size;
