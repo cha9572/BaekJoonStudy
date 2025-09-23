@@ -1,4 +1,4 @@
-package BFS.WEEK3.BOJ_1926;
+package BFS.WEEKunknown.BOJ_1926;
 
 import java.io.*;
 import java.util.*;
