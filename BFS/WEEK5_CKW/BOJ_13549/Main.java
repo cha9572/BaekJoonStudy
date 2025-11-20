@@ -25,7 +25,7 @@ public class Main {
 
         if(N==K){
             System.out.println(0);
-            exit(0);
+            return;
         }
 
         while(!q.isEmpty()) {
