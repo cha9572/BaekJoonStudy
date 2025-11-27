@@ -9,6 +9,7 @@ public class Main {
     static int N, M, K;
     static int[] R, C;
     static int[][][] sticker;
+    static long max = 0;
 
     public static boolean check(int spin, int[][] note, int ystart, int xstart, int stiNum){
         if(spin==0) { // 0도
@@ -26,7 +27,7 @@ public class Main {
             for(int i=0; i<C[stiNum]; i++) {
                 for(int j=R[stiNum]-1; j>=0; j--) {
                     if(sticker[stiNum][j][i] == 1) {
-                        if(note[ystart + j][xstart + i] == 1) {
+                        if(note[ystart + i][xstart + R[stiNum]-1-j] == 1) {
                             return false;
                         }
                     }
@@ -35,9 +36,9 @@ public class Main {
         }
         else if(spin==2) { // 180도
             for(int i=R[stiNum]-1; i>=0; i--) {
-                for(int j=0; j<C[stiNum]; j++) {
+                for(int j=C[stiNum]-1; j>=0; j--) {
                     if(sticker[stiNum][i][j] == 1) {
-                        if(note[ystart + i][xstart + j] == 1) {
+                        if(note[ystart + R[stiNum]-1-i][xstart + C[stiNum]-1-j] == 1) {
                             return false;
                         }
                     }
@@ -45,10 +46,10 @@ public class Main {
             }
         }
         else if(spin==3) { // 270도
-            for(int i=0; i<C[stiNum]; i++) {
+            for(int i=C[stiNum]-1; i>=0; i--) {
                 for(int j=0; j<R[stiNum]; j++) {
-                    if(sticker[stiNum][i][j] == 1) {
-                        if(note[ystart + i][xstart + j] == 1) {
+                    if(sticker[stiNum][j][i] == 1) {
+                        if(note[ystart + C[stiNum]-i-1][xstart + j] == 1) {
                             return false;
                         }
                     }
@@ -62,28 +63,32 @@ public class Main {
         if(spin==0) {
             for(int i=0; i<R[stiNum]; i++){
                 for(int j=0; j<C[stiNum]; j++){
-                    note[ystart+i][xstart+j] = sticker[stiNum][i][j];
+                    if(note[ystart+i][xstart+j]==0)
+                        note[ystart+i][xstart+j] = sticker[stiNum][i][j];
                 }
             }
         }
         else if(spin==1) {
             for(int i=0; i<C[stiNum]; i++) {
                 for(int j=R[stiNum]-1; j>=0; j--) {
-                    note[ystart+i][xstart + j] = sticker[stiNum][i][j];
+                    if(note[ystart + i][xstart + R[stiNum]-1-j]==0)
+                        note[ystart + i][xstart + R[stiNum]-1-j] = sticker[stiNum][j][i];
                 }
             }
         }
         else if(spin==2) {
             for(int i=R[stiNum]-1; i>=0; i--) {
-                for(int j=0; j<C[stiNum]; j++) {
-                    note[ystart+i][xstart + j] = sticker[stiNum][i][j];
+                for(int j=C[stiNum]-1; j>=0; j--) {
+                    if(note[ystart + R[stiNum]-1-i][xstart + C[stiNum]-1-j]==0)
+                        note[ystart + R[stiNum]-1-i][xstart + C[stiNum]-1-j] = sticker[stiNum][i][j];
                 }
             }
         }
         else if(spin==3) {
-            for(int i=0; i<C[stiNum]; i++) {
+            for(int i=C[stiNum]-1; i>=0; i--) {
                 for(int j=0; j<R[stiNum]; j++) {
-                    note[ystart+i][xstart + j] = sticker[stiNum][i][j];
+                    if(note[ystart+C[stiNum]-1-i][xstart + j]==0)
+                        note[ystart+C[stiNum]-1-i][xstart + j] = sticker[stiNum][j][i];
                 }
             }
         }
@@ -93,34 +98,44 @@ public class Main {
     public static void search(int stiNum, int[][] note){
 
         if(stiNum==K){
-            long count = Arrays.stream(note).flatMapToInt(Arrays::stream).filter(num -> num == 0).count();
-            System.out.println(count);
+            long count = Arrays.stream(note).flatMapToInt(Arrays::stream).filter(num -> num == 1).count();
+            if(max<count){
+                max = count;
+            }
+            //max = Math.max(max, count);
             return;
+        }
+        int[][] tmp = new int[note.length][note[0].length];
+
+        for(int i=0; i<note.length; i++){
+            tmp[i] = note[i].clone();
         }
 
         for(int i=0; i<4; i++) { // 0도 90도 180도 270도
             if(i%2==0) { // 0도 180도
                 for (int ystart = 0; ystart <= N - R[stiNum]; ystart++) {
                     for (int xstart = 0; xstart <= M - C[stiNum]; xstart++) {
-                        if (check(i, note, ystart, xstart, stiNum)) {
-                            update(i, note, ystart, xstart, stiNum);
-                            search(stiNum + 1, note);
+                        if (check(i, tmp, ystart, xstart, stiNum)) {
+                            update(i, tmp, ystart, xstart, stiNum);
+                            search(stiNum + 1, tmp);
+                            return;
                         }
-                        search(stiNum+1, note);
                     }
                 }
             }
             else{ // 90도 270도
                 for (int ystart = 0; ystart <= N - C[stiNum]; ystart++) {
                     for (int xstart = 0; xstart <= M - R[stiNum]; xstart++) {
-                        if (check(i, note, ystart, xstart, stiNum)) {
-                            update(i, note, ystart, xstart, stiNum);
-                            search(stiNum + 1, note);
+                        if (check(i, tmp, ystart, xstart, stiNum)) {
+                            update(i, tmp, ystart, xstart, stiNum);
+                            search(stiNum + 1, tmp);
+                            return;
                         }
                     }
                 }
             }
         }
+        search(stiNum + 1, note);
     }
 
     public static void main(String[] args) throws IOException {
@@ -132,7 +147,7 @@ public class Main {
         K = Integer.parseInt(st.nextToken());
 
         int[][] note = new int[N][M];
-        sticker = new int[4][10][10];
+        sticker = new int[K][10][10];
         R = new int[K]; C = new int[K];
 
         for(int i=0; i<K; i++){
@@ -150,6 +165,7 @@ public class Main {
 
         search(0, note);
 
+        System.out.println(max);
 
     }
 
