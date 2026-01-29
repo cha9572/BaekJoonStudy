@@ -27,6 +27,9 @@ bin/
 *.exe
 *.out
 *.o
+*.ilk
+*.pdb
+*.obj
 
 ### Mac OS ###
 .DS_Store
